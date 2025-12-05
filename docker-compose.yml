@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  mariadb:
+    build: ./srcs/requirements/mariadb
+    environment: 
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}f
+      DB_PASS: ${DB_PASS}
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - inception
+  
+volumes:
+  db:
+
+networks:
+  inception:
