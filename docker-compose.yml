@@ -7,12 +7,26 @@ services:
     env_file:
       - .env
     volumes:
-      - db:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     networks:
       - inception
-  
+    
+  wordpress:
+    build: ./srcs/requirements/wordpress
+    container_name: wordpress
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception
+
 volumes:
-  db:
+  mariadb_data:
+  wordpress_data:
+  
 
 networks:
   inception:
