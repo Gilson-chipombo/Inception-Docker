@@ -1,19 +1,22 @@
-FROM ubuntu
+FROM debian:bullseye
 
-RUN apt-get update && apt-get install -y mariadb-server
+ENV DEBIAN_FRONTEND=moninteractive
 
-# Criar o diretório de runtime do MariaDB
-RUN mkdir -p /run/mysqld \
-    && chown -R mysql:mysql /run/mysqld
+RUN apt-get update -y && \
+    apt-get install -y mariadb-server && \
+    apt-get clean
 
-# Criar pasta de inicialização
-RUN mkdir -p /docker-entrypoint-initdb.d \
-    && chown -R mysql:mysql /docker-entrypoint-initdb.d
+# Cria directorios que o MariaDB precisa
 
-#COPY my.cnf /etc/mysql/my.cnf
+RUN mkdir -p /run/mysqld && \
+        chown -R mysql:mysql /run/mysqld
 
-COPY tools/init.sql /docker-entrypoint-initdb.d/
+#Copia script de inicializacao
+COPY tools/init.sh /init.sh
+RUN chmod +x /init.sh
 
 EXPOSE 3306
 
-CMD ["mysqld"]
+#Inicia o script (nao o mysqld direto!)
+
+ENTRYPOINT [ "/init.sh"]
