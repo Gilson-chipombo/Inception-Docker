@@ -3,10 +3,9 @@ version: '3.9'
 services:
   mariadb:
     build: ./srcs/requirements/mariadb
-    environment: 
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}f
-      DB_PASS: ${DB_PASS}
+    container_name: mariadb
+    env_file:
+      - .env
     volumes:
       - db:/var/lib/mysql
     networks:
