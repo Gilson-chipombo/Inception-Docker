@@ -1,0 +1,20 @@
+FROM debian:billseye
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    nginx \
+    openssl \
+    && apt-get clean
+
+# Criar directorios SSL
+
+RUN mkdir -p /etc/nginx/SSL
+
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY tools/ssl.sh /ssl.sh
+RUN chmod +X /ssl.sh
+
+EXPOSE 443
+
+ENTRYPOINT ["/ssl.sh"]
