@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   mariadb:
     build: ./srcs/requirements/mariadb
@@ -20,6 +18,17 @@ services:
       - mariadb
     volumes:
       - wordpress_data:/var/www/html
+    networks:
+      - inception
+  nginex:
+    build: ./srcs/requirements/nginex
+    container_name: nginex
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
     networks:
       - inception
 
