@@ -2,23 +2,39 @@
 
 set -e
 
-# Espera o MariaDB ficar disponivel
-#until mysqladmin ping -h mariadb -u $DB_USER -p  $DB_PASS --silent; do
-#    sleep 1
-# #done
-mv /var/www/html/wordpress/* /var/www/html/
-#rm -rf /var/www/html/wordpress
-# Criar wp-config.php se nao existir
+env
 
-#if [! -f wp-config.php ]; then
-    cp wp-config-simple.php wp-config.php
+echo "passou"
+if [ ! -f /var/www/html/wp-config.php ]; then
+    echo "baixando o wp" 
+    wp core download --path=/var/www/html --allow-root
 
-    sed -i "s/database_name_here/${DB_NAME}/" wp-config.php
-    sed -i "s/username_here/${DB_USER}/" wp-config.php
-    sed -i "s/password_here/${DB_PASS}/" wp-config.php
-    sed -i "s/localhost/mysql/"wp-config.php
-#fi
+    echo " criando o usuario"
+    wp config create --path=/var/www/html \
+        --dbname=${DB_NAME} \
+        --dbuser=${DB_USER} \
+        --dbpass=${DB_PASS} \
+        --dbhost="mariadb" \
+        --allow-root
+    echo " instalando"
+    wp core install --path=/var/www/html \
+        --url=${DOMAIN} \
+        --title="${TITLE}" \
+        --admin_user=${WP_ADMIN_NAME} \
+        --admin_password=${WP_ADMIN_PASSWORD} \
+        --admin_email=${WP_ADMIN_EMAIL} \
+        --skip-email \
+        --allow-root
 
+        # wp user create \
+        #     "$WP_USER" "$WP_USER_EMAIL" \
+        #     --user_pass="$WP_USER_PASS" \
+        #     --role=author \
+        #     --allow-root
+else
+    echo " tudo pronot" 
+fi
 # Iniciar PHP-FPM
 
-php-fpm8.2 -F
+echo "Executando o PHP FPM"
+exec php-fpm8.2 -F

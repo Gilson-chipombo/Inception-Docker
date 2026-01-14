@@ -13,14 +13,15 @@ RUN wget https://wordpress.org/latest.tar.gz -P /tmp \
     && tar -xzf /tmp/latest.tar.gz -C /var/www/html \
     && chown -R www-data:www-data /var/www/html/
 
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+chmod +x wp-cli.phar && \
+mv wp-cli.phar /usr/local/bin/wp
 # Copiar script de configuracao
-COPY tools/wp-config.sh /wp-config.sh
+COPY ./tools/wp-config.sh wp-config.sh
 COPY conf/conf.conf /etc/php/8.2/fpm/pool.d/www.conf
 RUN chmod +x wp-config.sh
 
-WORKDIR /
-
 EXPOSE 9000
 
-ENTRYPOINT [ "/usr/bin/tini", "--"]
-CMD [ "/wp-config.sh" ]
+ENTRYPOINT ["./wp-config.sh"]

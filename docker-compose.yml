@@ -2,6 +2,7 @@ services:
   mariadb:
     build: ./srcs/requirements/mariadb
     container_name: mariadb
+    pull_policy: never
     env_file:
       - .env
     volumes:
@@ -12,10 +13,11 @@ services:
   wordpress:
     build: ./srcs/requirements/wordpress
     container_name: wordpress
-    env_file:
-      - .env
+    pull_policy: never
     depends_on:
       - mariadb
+    env_file:
+      - .env
     volumes:
       - wordpress_data:/var/www/html
     networks:
@@ -23,19 +25,30 @@ services:
   nginex:
     build: ./srcs/requirements/nginex
     container_name: nginex
+    pull_policy: never
+    depends_on:
+      - wordpress
     volumes:
       - wordpress_data:/var/www/html
     ports:
       - "443:443"
-    depends_on:
-      - wordpress
     networks:
       - inception
 
 volumes:
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/gilsonchipombo/data/data_
+      o: bind
+
   wordpress_data:
-  
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/gilsonchipombo/data/wordpress_
+      o: bind
 
 networks:
   inception:
