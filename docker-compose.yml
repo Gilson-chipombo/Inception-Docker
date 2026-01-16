@@ -1,8 +1,28 @@
+secrets:
+  db_pass: 
+    file: ./secrets/db_pass.txt
+  db_user:
+    file: ./secrets/db_user.txt
+  db_name:
+    file: ./secrets/db_name.txt
+  wp_admin_pass:
+    file: ./secrets/wp_admin_pass.txt
+  wp_admin_name:
+    file: ./secrets/wp_admin_name.txt
+  wp_admin_email:
+    file: ./secrets/wp_admin_email.txt
+  wp_user_pass:
+    file: ./secrets/wp_user_pass.txt
+
 services:
   mariadb:
     build: ./srcs/requirements/mariadb
     container_name: mariadb
     pull_policy: never
+    secrets:
+      - db_name
+      - db_pass
+      - db_user
     env_file:
       - .env
     volumes:
@@ -14,6 +34,11 @@ services:
     build: ./srcs/requirements/wordpress
     container_name: wordpress
     pull_policy: never
+    secrets:
+      - wp_admin_name
+      - wp_admin_email
+      - wp_admin_pass
+      - wp_user_pass
     depends_on:
       - mariadb
     env_file:
@@ -22,9 +47,9 @@ services:
       - wordpress_data:/var/www/html
     networks:
       - inception
-  nginex:
-    build: ./srcs/requirements/nginex
-    container_name: nginex
+  nginx:
+    build: ./srcs/requirements/nginx
+    container_name: nginx
     pull_policy: never
     depends_on:
       - wordpress

@@ -11,9 +11,9 @@ done
 
 # Inicialização
 mysql --socket=/run/mysqld/mysqld.sock -u root <<EOF
-CREATE DATABASE IF NOT EXISTS ${DB_NAME};
-CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASS}';
-GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
+CREATE DATABASE IF NOT EXISTS $(cat /run/secrets/db_name);
+CREATE USER IF NOT EXISTS '$(cat /run/secrets/db_user)'@'%' IDENTIFIED BY '$(cat /run/secrets/db_pass)';
+GRANT ALL PRIVILEGES ON $(cat /run/secrets/db_name).* TO '$(cat /run/secrets/db_user)'@'%';
 FLUSH PRIVILEGES;
 EOF
 
